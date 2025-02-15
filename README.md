@@ -41,7 +41,7 @@ This project is an AI-based email reply generator designed to simplify the proce
 
    - Navigate to the email-writer-backend directory:
      ```bash
-     cd backend
+     cd email-writer-backend
      ```
    - Create a Spring Boot project using Spring Initializr or existing files.
    - Add dependencies for Spring Web and Lombok in `pom.xml`.
@@ -50,7 +50,7 @@ This project is an AI-based email reply generator designed to simplify the proce
 
    - Navigate to the email-writer-react frontend directory:
      ```bash
-     cd frontend
+     cd email-writer-react
      ```
    - Install dependencies:
      ```bash
@@ -60,7 +60,7 @@ This project is an AI-based email reply generator designed to simplify the proce
 4. **Chrome Extension Setup**
    - Navigate to the email-writer-extension `extension` directory:
      ```bash
-     cd extension
+     cd email-writer-extension
      ```
    - Load the unpacked extension in Chrome:
      - Go to `chrome://extensions`
