@@ -1,0 +1,184 @@
+1. Imports:
+The file begins by importing necessary dependencies:
+
+useState: This is a React hook used to manage state in functional components.
+Box, Button, CircularProgress, Container, FormControl, InputLabel, MenuItem, Select, TextField, and Typography from @mui/material: These are Material-UI components used to style and structure the layout.
+axios: A promise-based HTTP client used for making requests to the backend API.
+
+2. State Initialization:
+
+Code
+
+const [emailContent, setEmailContent] = useState("");
+const [tone, setTone] = useState("");
+const [generatedReply, setGeneratedReply] = useState("");
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
+
+emailContent: Stores the content of the original email that the user will input.
+tone: Stores the tone that the user selects (like professional, casual, or friendly).
+generatedReply: Stores the generated reply after making an API call.
+loading: A boolean flag that tracks whether the app is waiting for the API to respond.
+error: Holds an error message (if any) when the API call fails.
+
+3. handleSubmit Function:
+
+Code
+
+const handleSubmit = async () => {
+  setLoading(true);
+  setError("");
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/email/generate",
+      { emailContent, tone }
+    );
+    setGeneratedReply(
+      typeof response.data === "string"
+        ? response.data
+        : JSON.stringify(response.data)
+    );
+  } catch (error) {
+    setError("Failed to generate email reply. Please try again.");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+This is the main function that handles the form submission when the user clicks the "Generate Reply" button.
+
+setLoading(true): Starts the loading process, displaying a spinner.
+setError(""): Clears any existing error message.
+axios.post(...): Makes a POST request to the backend API (http://localhost:8080/api/email/generate), sending the emailContent and tone as payload.
+If the request is successful, the response.data (the generated email reply) is saved to generatedReply.
+If the request fails, an error message is set in the error state.
+finally { setLoading(false); }: Stops the loading spinner after the request completes.
+
+4. Rendering the UI:
+The component returns the JSX layout that defines how the UI is structured. Here's the breakdown:
+
+Title:
+Code
+
+<Typography variant="h3" component="h1" gutterButton>
+  Email Reply Generator
+</Typography>
+This renders the main heading "Email Reply Generator".
+
+Form Elements:
+The form consists of two main fields:
+
+Original Email Content (Text area)
+Tone (Dropdown selection)
+Original Email Content (Text Area):
+
+Code
+
+<TextField
+  fullWidth
+  multiline
+  rows={6}
+  variant="outlined"
+  label="Original Email Content"
+  value={emailContent || ""}
+  onChange={(e) => setEmailContent(e.target.value)}
+  sx={{ mb: 2 }}
+/>
+TextField: A Material-UI component used to create the input field.
+multiline: Allows the user to input multiple lines of text (essential for email content).
+rows={6}: Sets the height of the text area.
+label="Original Email Content": A label for the input field.
+value={emailContent || ""}: The value of the input field is bound to the emailContent state.
+onChange: Updates the emailContent state whenever the user types in the input field.
+Tone (Dropdown):
+
+Code
+
+<FormControl fullWidth sx={{ mb: 2 }}>
+  <InputLabel>Tone (Optional)</InputLabel>
+  <Select
+    value={tone || ""}
+    label={"Tone (Optional)"}
+    onChange={(e) => setTone(e.target.value)}
+  >
+    <MenuItem value="">None</MenuItem>
+    <MenuItem value="professional">Professional</MenuItem>
+    <MenuItem value="casual">Casual</MenuItem>
+    <MenuItem value="Friendly">Friendly</MenuItem>
+  </Select>
+</FormControl>
+FormControl: Wraps around the select input to provide additional styling and layout.
+InputLabel: The label for the dropdown (select input).
+Select: A dropdown menu for selecting the tone (Professional, Casual, Friendly).
+The value of the dropdown is bound to the tone state.
+onChange: Updates the tone state whenever the user selects an option.
+Generate Reply Button:
+
+Code
+
+<Button
+  variant="contained"
+  onClick={handleSubmit}
+  disabled={!emailContent || loading}
+  fullWidth
+>
+  {loading ? <CircularProgress /> : "Generate Reply"}
+</Button>
+Button: A Material-UI button to trigger the form submission (handleSubmit).
+variant="contained": Provides a filled button style.
+onClick={handleSubmit}: Calls the handleSubmit function when the button is clicked.
+disabled={!emailContent || loading}: Disables the button if the email content is empty or if the app is loading.
+If loading is true, a CircularProgress spinner is shown; otherwise, the button text says "Generate Reply".
+
+5. Error Message:
+
+Code
+
+{error && (
+  <Typography color="error" sx={{ mb: 2 }}>
+    {error}
+  </Typography>
+)}
+If the error state is not empty (i.e., if an error occurred), this renders an error message using Typography styled with a red color.
+
+6. Generated Reply Section:
+Once the reply is generated, it is displayed in a new section:
+
+Code
+
+{generatedReply && (
+  <Box sx={{ mt: 3 }}>
+    <Typography variant="h6" gutterBottom>
+      Generated Reply:
+    </Typography>
+    <TextField
+      fullWidth
+      multiline
+      rows={6}
+      variant="outlined"
+      value={generatedReply || ""}
+      InputProps={{ readOnly: true }}
+    />
+    <Button
+      variant="outlined"
+      sx={{ mt: 2 }}
+      onClick={() => navigator.clipboard.writeText(generatedReply)}
+    >
+      Copy to Clipboard
+    </Button>
+  </Box>
+)}
+If generatedReply has a value, this section will display:
+"Generated Reply" as a heading.
+A TextField that shows the generated reply. This field is set to readOnly so users can't modify it.
+A button labeled "Copy to Clipboard" which, when clicked, copies the reply to the clipboard using navigator.clipboard.writeText(generatedReply).
+Summary:
+The app is designed to:
+
+Accept an email content and tone as input.
+Send the data to an API endpoint via an HTTP request (axios).
+Display a generated email reply upon successful response.
+Handle errors and show loading states.
+Allow users to copy the generated reply to their clipboard.
+If any part of the API request fails, the error state will be populated with an error message, and the UI will inform the user. The button disables during loading to prevent multiple submissions.
