@@ -108,4 +108,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-For any inquiries, please reach out via (mailto:srihariyadav1343gmail.com).
+For any inquiries, please reach out via (mailto:srihariyadav1343@gmail.com).
